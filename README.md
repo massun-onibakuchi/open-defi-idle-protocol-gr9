@@ -1,13 +1,8 @@
-# AlphaHomora PoolTogether
+# Idle Protocol AlphaHomora Wrapper
 
-[日本語](docs/ja/README_JA.md)  
-[Overview](docs/en/overview.md)  
-[YouTube](https://www.youtube.com/watch?v=viwcBIKxW-s)
+Alpha Finance and Idle Protocol Integration.
 
-Alpha Finance and PoolTogether Integration.
-
-PoolTogether is Prize Savings Protocol Ethereum smart contracts.  
-For an overview of the concepts and API please see the [documentation](https://docs.pooltogether.com/)
+Idle Protocol is the yield aggregator.
 
 ## Concept
 

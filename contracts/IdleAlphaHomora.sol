@@ -30,9 +30,9 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
     uint256 public constant SECS_OF_THE_YEAR = 3600 * 24 * 365;
 
     /**
-     * @param _token : cToken address
-     * @param _underlying : underlying token (eg DAI) address
-     * @param _idleToken : idleToken token (eg DAI) address
+     * @param _token : ibETH address
+     * @param _underlying : underlying token (WETH) address
+     * @param _idleToken : idleToken token (WETH) address
      */
     constructor(
         address _token,
@@ -70,11 +70,11 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
     }
 
     /**
-     * Gets all underlying tokens in this contract and mints cTokens
+     * Gets all underlying tokens in this contract and mints ibETHs
      * tokens are then transferred to msg.sender
      * NOTE: underlying tokens needs to be sended here before calling this
      *
-     * @return minted ibETH amount
+     * @return ibETHAmount minted ibETH amount
      */
     function mint() external override onlyIdle returns (uint256 ibETHAmount) {
         // convert weth to eth
@@ -83,18 +83,18 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         IBank(token).deposit{ value: address(this).balance }();
 
         IERC20 _token = IERC20(token);
-        // cTokens are now in this contract
+        // ibETHs are now in this contract
         ibETHAmount = _token.balanceOf(address(this));
         // transfer them to the caller
         _token.safeTransfer(msg.sender, ibETHAmount);
     }
 
     /**
-     * Gets all cTokens in this contract and redeems underlying tokens.
+     * Gets all ibETHs in this contract and redeems underlying tokens.
      * underlying tokens are then transferred to `_account`
-     * NOTE: cTokens needs to be sended here before calling this
+     * NOTE: ibETHs needs to be sended here before calling this
      *
-     * @return underlying tokens redeemd
+     * @return wethAmount underlying tokens redeemd
      */
     function redeem(address _account) external override onlyIdle returns (uint256 wethAmount) {
         // Funds needs to be sended here before calling this
@@ -112,7 +112,7 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
      * @param params : array with all params needed for calculation (see below)
      * @return : yearly net rate
      */
-    function nextSupplyRateWithParams(uint256[] memory params) public view override returns (uint256) {
+    function nextSupplyRateWithParams(uint256[] memory params) public pure override returns (uint256) {
         /*
         params[0] // glbDebtVal;
         params[1] // address(bank).balance;
@@ -143,7 +143,7 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         // uint256 ratePerSec = borrowRatePerSec.mul(toSupplier);
         // uint256 utilization = glbDebtVal.div(glbDebtVal.add(balance));
 
-        uint256[] memory params = new uint256[](4);
+        uint256[] memory params = new uint256[](5);
         params[0] = bank.glbDebtVal();
         params[1] = address(bank).balance;
         params[2] = config.getReservePoolBps();

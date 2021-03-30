@@ -3,7 +3,7 @@ process.env.TS_NODE_FILES = true;
 module.exports = {
   'allow-uncaught': true,
   diff: true,
-  extension: ['ts'],
+  extension: ['ts','js'],
   recursive: true,
   reporter: 'spec',
   require: ['ts-node/register', 'hardhat/register'], // ['ts-node/register/transpile-only'], (for yarn link <plugin>)

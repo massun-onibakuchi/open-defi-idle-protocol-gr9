@@ -55,18 +55,7 @@ const config: HardhatUserConfig = {
     // https://hardhat.org/config/#hd-wallet-config
   },
   dependencyCompiler: {
-    paths: [
-      "@pooltogether/pooltogether-contracts/contracts/builders/PoolWithMultipleWinnersBuilder.sol",
-      "@pooltogether/pooltogether-contracts/contracts/registry/Registry.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-pool/compound/CompoundPrizePoolProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-pool/yield-source/YieldSourcePrizePoolProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-pool/stake/StakePrizePoolProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/builders/MultipleWinnersBuilder.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-strategy/multiple-winners/MultipleWinnersProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/builders/ControlledTokenBuilder.sol",
-      "@pooltogether/pooltogether-contracts/contracts/token/ControlledTokenProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/token/TicketProxyFactory.sol",
-    ]
+    paths: []
   },
   etherscan: {
     apiKey: ETHERSCAN_API_KEY
