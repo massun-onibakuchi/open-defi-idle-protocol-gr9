@@ -2,9 +2,11 @@
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
     "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
     },
     "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
     },
     "[solidity]": {
@@ -12,6 +14,5 @@
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "eslint.lintTask.enable": true,
-    "eslint.packageManager": "yarn",
-    "eslint.format.enable": true
+    "eslint.packageManager": "yarn"
 }

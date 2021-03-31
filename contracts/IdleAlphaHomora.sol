@@ -51,6 +51,8 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         idleToken = _idleToken;
     }
 
+    receive() external payable {}
+
     /**
      * Throws if called by any account other than IdleToken contract.
      */
@@ -105,7 +107,7 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
     function redeem(address _account) external override onlyIdle returns (uint256 wethAmount) {
         // Funds needs to be sended here before calling this
         IERC20 _underlying = IERC20(underlying);
-        // redeem all underlying sent in this contract
+        // redeem all ibETH sent in this contract
         IBank(token).withdraw(IERC20(token).balanceOf(address(this)));
         // convert ETH to WETH
         IWETH(underlying).deposit{ value: address(this).balance }();
@@ -144,16 +146,14 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
 
         // uint256 glbDebtVal = bank.glbDebtVal();
         // uint256 balance = address(bank).balance;
+        // uint256 floating = balance.add(_amount);
         // uint256 borrowRatePerSec = config.getInterestRate(glbDebtVal, floating);
-        // uint256 toSupplier = uint256(1e18).sub(config.getReservePoolBps());
-        // uint256 ratePerSec = borrowRatePerSec.mul(toSupplier);
-        // uint256 utilization = glbDebtVal.div(glbDebtVal.add(balance));
 
         uint256[] memory params = new uint256[](5);
         params[0] = bank.glbDebtVal();
         params[1] = address(bank).balance;
         params[2] = config.getReservePoolBps();
-        params[3] = config.getInterestRate(params[0], params[1].add(params[0]).add(_amount));
+        params[3] = config.getInterestRate(params[0], params[1].add(_amount));
         params[4] = _amount;
         // return utilization.mul(ratePerSec).mul(SECS_PER_YEAR);
         return nextSupplyRateWithParams(params);
@@ -171,6 +171,10 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
      */
     function getPriceInToken() external view override returns (uint256) {
         IBank bank = IBank(token);
-        return bank.totalETH().div(bank.totalSupply());
+        return bank.totalETH().mul(EXP_SCALE).div(bank.totalSupply());
+    }
+
+    function availableLiquidity() external view returns (uint256) {
+        return IBank(token).totalETH();
     }
 }
