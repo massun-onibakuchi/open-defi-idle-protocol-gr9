@@ -11,7 +11,7 @@ chai.use(require("chai-bignumber")());
 const BANK_ADDRESS = "0x67B66C99D3Eb37Fa76Aa3Ed1ff33E8e39F0b9c7A";
 const IDLE_TOKEN_ADDRESS = "0x875773784Af8135eA0ef43b5a374AaD105c5D39e";
 const SECS_OF_THE_YEAR = 3600 * 24 * 365;
-const EXP18 = BigNumber.from("10").pow("18");
+const EXP_SCALE = BigNumber.from("10").pow("18");
 
 describe("IdleAlphaHomora", async function () {
     const provider = waffle.provider;
@@ -48,27 +48,28 @@ describe("IdleAlphaHomora", async function () {
     });
 
     function supplyRateWithParams(params) {
-        const toSupplier = BigNumber.from("10").pow("18").sub(params[2]);
+        const toSupplier = EXP_SCALE.sub(params[2]);
         const ratePerSec = params[3].mul(toSupplier);
-        const utilizationRate = params[0].div(params[1].add(params[4]));
-        return utilizationRate.mul(ratePerSec).mul(BigNumber.from(SECS_OF_THE_YEAR));
+        const utilizationRate = params[0].mul(EXP_SCALE).div(params[1].add(params[4]));
+        return utilizationRate.mul(ratePerSec).mul(BigNumber.from(SECS_OF_THE_YEAR)).div(EXP_SCALE);
     }
 
     it("return next supply rate given amount 0", async function () {
         const params = [];
         params[0] = BigNumber.from("124978017723411850744855"); // bank.glbDebtVal()
+        // todo おそらく前者が正しいかもだが，solファイルの方でutilizationの計算の丸め込みのミスをしていたのでそこの見直し
         params[1] = BigNumber.from("155700305727622899758175"); // bank.totalETH();
         // params[1] = BigNumber.from("31539345857040984629574"); // address(bank).balance;
         params[2] = BigNumber.from("1000"); // await bankInterestConfig.getReservePoolBps();
         params[3] = BigNumber.from("3165005828"); // await bankInterestConfig.getInterestRate(params[0],params[1]);
         params[4] = BigNumber.from("0");
-        // utilizationRate = 0.7985
+        // utilizationRate = 0.80*100
         // supplyRate = 0.717
         const expectedRes = supplyRateWithParams(params);
         const res = await bankWrapper.nextSupplyRateWithParams(params);
-        console.log('utilizationRate :>> ', params[0].div(params[1].add(params[4])).toString());
-        console.log('res.div(EXP18).toString() :>> ', res.div(EXP18).toString());
-        console.log('expectedRes.div(EXP18).toString() :>> ', expectedRes.div(EXP18).toString());
+        console.log('utilizationRate :>> ', params[0].mul(BigNumber.from(100)).div(params[1].add(params[4])).toString());
+        console.log('res.div(EXP_SCALE).toString() :>> ', res.div(EXP_SCALE).toString());
+        console.log('expectedRes.div(EXP_SCALE).toString() :>> ', expectedRes.div(EXP_SCALE).toString());
         expect(res).to.be.bignumber.eq(expectedRes);
         // res.should.be.bignumber.to.eq(expectedRes);
     });

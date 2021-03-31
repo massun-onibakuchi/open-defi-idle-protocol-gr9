@@ -1,9 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0
 /**
- * @title: Compound wrapper
- * @summary: Used for interacting with Compound. Has
+ * @title: Alphahomora wrapper
+ * @summary: Used for interacting with Alphahomora. Has
  *           a common interface with all other protocol wrappers.
  *           This contract holds assets only during a tx, after tx it should be empty
- * @author: Idle Labs Inc., idle.finance
  */
 pragma solidity >=0.7.0 <0.8.0;
 
@@ -21,13 +21,15 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    // protocol token `bank` address
+    ///@dev protocol token ibETH (bank) address
     address public override token;
-    // underlying token WETH address
+    ///@dev underlying token WETH address
     address public override underlying;
+    ///@dev idle token address
     address public idleToken;
 
     uint256 public constant SECS_OF_THE_YEAR = 3600 * 24 * 365;
+    uint256 public constant EXP_SCALE = 1e18;
 
     /**
      * @param _token : ibETH address
@@ -121,10 +123,10 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         params[4] // _newAmount;
         */
         uint256 balance = params[1].add(params[4]);
-        uint256 utilization = params[0].div(balance);
-        uint256 toSupplier = uint256(10e18).sub(params[2]);
+        uint256 utilizationManttisa = params[0].mul(EXP_SCALE).div(balance);
+        uint256 toSupplier = uint256(1e18).sub(params[2]);
         uint256 ratePerSec = params[3].mul(toSupplier);
-        return utilization.mul(ratePerSec).mul(SECS_OF_THE_YEAR);
+        return utilizationManttisa.mul(ratePerSec).mul(SECS_OF_THE_YEAR).div(EXP_SCALE);
     }
 
     /**
@@ -139,13 +141,14 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         // uint256 glbDebtVal = bank.glbDebtVal();
         // uint256 balance = address(bank).balance.add(_amount);
         // uint256 borrowRatePerSec = config.getInterestRate(glbDebtVal, balance);
-        // uint256 toSupplier = uint256(10e18).sub(config.getReservePoolBps());
+        // uint256 toSupplier = uint256(1e18).sub(config.getReservePoolBps());
         // uint256 ratePerSec = borrowRatePerSec.mul(toSupplier);
         // uint256 utilization = glbDebtVal.div(glbDebtVal.add(balance));
 
         uint256[] memory params = new uint256[](5);
         params[0] = bank.glbDebtVal();
-        params[1] = address(bank).balance;
+        params[1] = bank.totalETH();
+        // params[1] = address(bank).balance; // bank.totalETH()
         params[2] = config.getReservePoolBps();
         params[3] = config.getInterestRate(params[0], params[1].add(_amount));
         params[4] = _amount;
