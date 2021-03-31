@@ -28,7 +28,7 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
     ///@dev idle token address
     address public idleToken;
 
-    uint256 public constant SECS_OF_THE_YEAR = 3600 * 24 * 365;
+    uint256 public constant SECS_PER_YEAR = 3600 * 24 * 365;
     uint256 public constant EXP_SCALE = 1e18;
 
     /**
@@ -79,8 +79,12 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
      * @return ibETHAmount minted ibETH amount
      */
     function mint() external override onlyIdle returns (uint256 ibETHAmount) {
+        uint256 wethBalance = IERC20(underlying).balanceOf(address(this));
+        if (wethBalance == 0) {
+            return ibETHAmount;
+        }
         // convert weth to eth
-        IWETH(underlying).withdraw(IERC20(underlying).balanceOf(address(this)));
+        IWETH(underlying).withdraw(wethBalance);
         // mint the ibETH and assert there is no error
         IBank(token).deposit{ value: address(this).balance }();
 
@@ -122,11 +126,11 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         params[3] // borrowRatePerSec;
         params[4] // _newAmount;
         */
-        uint256 balance = params[1].add(params[4]);
-        uint256 utilizationManttisa = params[0].mul(EXP_SCALE).div(balance);
+        uint256 total = params[0].add(params[1]).add(params[4]); // debt + bank's ETH + _newAmount
+        uint256 utilizationManttisa = params[0].mul(EXP_SCALE).div(total); // debt / totalLiquidity
         uint256 toSupplier = uint256(1e18).sub(params[2]);
         uint256 ratePerSec = params[3].mul(toSupplier);
-        return utilizationManttisa.mul(ratePerSec).mul(SECS_OF_THE_YEAR).div(EXP_SCALE);
+        return utilizationManttisa.mul(ratePerSec).mul(SECS_PER_YEAR).div(EXP_SCALE);
     }
 
     /**
@@ -139,20 +143,19 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         IBankConfig config = IBankConfig(bank.config());
 
         // uint256 glbDebtVal = bank.glbDebtVal();
-        // uint256 balance = address(bank).balance.add(_amount);
-        // uint256 borrowRatePerSec = config.getInterestRate(glbDebtVal, balance);
+        // uint256 balance = address(bank).balance;
+        // uint256 borrowRatePerSec = config.getInterestRate(glbDebtVal, floating);
         // uint256 toSupplier = uint256(1e18).sub(config.getReservePoolBps());
         // uint256 ratePerSec = borrowRatePerSec.mul(toSupplier);
         // uint256 utilization = glbDebtVal.div(glbDebtVal.add(balance));
 
         uint256[] memory params = new uint256[](5);
         params[0] = bank.glbDebtVal();
-        params[1] = bank.totalETH();
-        // params[1] = address(bank).balance; // bank.totalETH()
+        params[1] = address(bank).balance;
         params[2] = config.getReservePoolBps();
-        params[3] = config.getInterestRate(params[0], params[1].add(_amount));
+        params[3] = config.getInterestRate(params[0], params[1].add(params[0]).add(_amount));
         params[4] = _amount;
-        // return utilization.mul(ratePerSec).mul(SECS_OF_THE_YEAR);
+        // return utilization.mul(ratePerSec).mul(SECS_PER_YEAR);
         return nextSupplyRateWithParams(params);
     }
 
@@ -163,6 +166,9 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
         return nextSupplyRate(0);
     }
 
+    /**
+     * @return current price of ibETH in underlying
+     */
     function getPriceInToken() external view override returns (uint256) {
         IBank bank = IBank(token);
         return bank.totalETH().div(bank.totalSupply());
