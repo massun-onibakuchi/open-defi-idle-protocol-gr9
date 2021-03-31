@@ -5,7 +5,7 @@
  *           a common interface with all other protocol wrappers.
  *           This contract holds assets only during a tx, after tx it should be empty
  */
-pragma solidity >=0.7.0 <0.8.0;
+pragma solidity ^0.7.6;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
@@ -21,11 +21,11 @@ contract IdleAlphaHomora is ILendingProtocol, Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    ///@dev protocol token ibETH (bank) address
+    /// @dev protocol token ibETH (bank) address
     address public override token;
-    ///@dev underlying token WETH address
+    /// @dev underlying token WETH address
     address public override underlying;
-    ///@dev idle token address
+    /// @dev idle token address
     address public idleToken;
 
     uint256 public constant SECS_PER_YEAR = 3600 * 24 * 365;
