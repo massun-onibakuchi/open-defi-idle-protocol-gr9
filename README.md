@@ -6,7 +6,7 @@ Idle is a decentralized protocol dedicated to bringing automatic asset allocatio
 
 ## Concept
 
-The Idle protocol provides the best strategy for each asset. The strategies that handle stable assets such as DAI and USDC use multiple yield sources like AAVE, Compound, dydx. However, However, the ETH strategy is usually 100% allocated to Compound, and lacks diversity.
+The Idle protocol provides the best strategy for each asset. The strategies that handle stable assets such as DAI and USDC use multiple yield sources like AAVE, Compound, dydx. However, the ETH strategy is usually 100% allocated to Compound, and lacks diversity.
 
 Check best-yield ETH strategy status [here](https://idle.finance/#/dashboard/stats/best/WETH)
 
