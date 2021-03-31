@@ -1,6 +1,6 @@
-# Idle Protocol AlphaHomora Wrapper
+# Alpha Homora v1 Wrapper for Idle Protocol
 
-Alpha Finance and Idle Protocol Integration.
+The Alpha Homora v1 wrapper is a wrapper that implements the Idle protocol interface `IIdleProtocol`.
 
 Idle is a decentralized protocol dedicated to bringing automatic asset allocation and aggregation to the interest-bearing tokens economy. Idle aims to unlock the power of decentralized finance for everyone by single vehicle that automatically rebalances between underlying providers to always maintain the highest rates or the optimal risk/return allocation.
 
@@ -11,13 +11,26 @@ The Idle protocol provides the best strategy for each asset. The strategies that
 Check best-yield ETH strategy status [here](https://idle.finance/#/dashboard/stats/best/WETH)
 
 We know that Compound is one of the most battle-tested DeFi protocol and is relatively safe, but the interest rate for ETH is a bit lower.
+[Markert overivew](https://compound.finance/markets)
 
 Alpha Homora is the first leveraged yield farming and leveraged liquidity providing product in DeFi.
 Alpha Homora v1 provides ETH lending/borrowing, whose supply rate is higher than Compound's one. We can see APY [here](https://homora.alphafinance.io/earn)
 
-By integrating Alpha Homora V1 as a yield source, The idle protocol can can yield higher APY and more umami flavors.
+By integrating Alpha Homora V1 as a yield source, The idle protocol can yield competitive APY and more umami flavors.
 
 [Learn more in the Earn on ETH section.](https://alphafinancelab.gitbook.io/alpha-homora/#earn-on-eth)
+
+## Docs
+
+The wrapper `IdleAlphaHomora` implements the Idle protocol interface `IIdleProtocol`.
+
+[Idle Protocol Doc - Get integrated into Idle](https://developers.idle.finance/integrators/get-integrated-into-idle)
+
+### AlphaHomoraV1
+
+When users deposit ETH to Bank, they receive a proportional amount of ibETH token, a tradable and interest-bearing asset that represents their shares of ETH in the bank pool, similar to cToken in Compound.
+
+[Alpha Homora V1 Developer Doc](https://alphafinancelab.gitbook.io/alpha-homora-developer-doc/become-to-the-lender-of-alpha-homora-v1)
 
 [Alpha Homora V1 GitHub](https://github.com/AlphaFinanceLab/alphahomora)
 
