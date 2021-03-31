@@ -1,13 +1,9 @@
-const { ethers, waffle } = require("hardhat");
-const hre = require("hardhat");
-const chai = require("chai");
-const { expect,assert } = require("chai");
-const should =  chai.should();
-const { BigNumber } = ethers;
-const toWei = ethers.utils.parseEther;
-const solidity =  waffle.solidity;
+import hre from 'hardhat';
+import { waffle } from "hardhat";
+import { expect } from "chai";
+import { BigNumber } from 'ethers';
+const solidity = waffle.solidity;
 chai.use(solidity);
-
 // alpha homora v1 bank
 const BANK_ADDRESS = "0x67B66C99D3Eb37Fa76Aa3Ed1ff33E8e39F0b9c7A";
 const IDLE_TOKEN_ADDRESS = "0x875773784Af8135eA0ef43b5a374AaD105c5D39e";
@@ -26,7 +22,7 @@ describe("IdleAlphaHomora", async function () {
     let bankInterestConfig;
     let idleToken;
     before(async function () {
-        bank = await ethers.getVerifiedContractAt(BANK_ADDRESS);
+        bank = await hre.ethers.getVerifiedContractAt(BANK_ADDRESS);
         // idleToken = await ethers.getVerifiedContractAt(IDLE_TOKEN_ADDRESS);
         // const configAddress = await bank.config();
         // bankInterestConfig = await ethers.getVerifiedContractAt(configAddress);
@@ -74,9 +70,8 @@ describe("IdleAlphaHomora", async function () {
         );
         console.log("res.div(EXP_SCALE).toString() :>> ", res.div(EXP_SCALE).toString());
         console.log("expectedRes.div(EXP_SCALE).toString() :>> ", expectedRes.div(EXP_SCALE.pow(2)).toString());
-        // res.should.be.bignumber.eq(expectedRes);
-        assert.eq(res,expectedRes)
-        expect(res).to.be.bignumber.eq(expectedRes);
+        res.should.be.bignumber.eq(expectedRes);
+        // expect(res).to.be.bignumber.eq(expectedRes);
     });
 
     // it('getAPR returns current yearly rate', async function () {
